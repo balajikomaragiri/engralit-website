@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${course.title} + ' | Engralit'">Course Detail</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<nav class="navbar navbar-light bg-white shadow-sm py-3">
+    <div class="container">
+        <a class="navbar-brand fw-bold fs-4 text-navy d-flex align-items-center gap-2" href="/">
+            <img th:src="@{/images/logo.png}" alt="Engralit Logo" height="40">
+            ENGRALIT
+        </a>
+        <a href="/" class="btn btn-outline-navy btn-sm"><i class="bi bi-arrow-left"></i> Back to Courses</a>
+    </div>
+</nav>
+
+<section class="hero-section text-white py-5">
+    <div class="container">
+        <span class="badge bg-gold text-navy mb-2 px-3 py-2" th:text="${course.durationDays} + ' Days Target Course'">60 Days</span>
+        <h1 class="fw-bold" th:text="${course.title}">Course Title</h1>
+        <p class="lead" th:text="${course.tagline}">Tagline</p>
+    </div>
+</section>
+
+<section class="container py-5">
+    <div class="row g-5">
+        <!-- Left: Syllabus -->
+        <div class="col-lg-7">
+            <h3 class="fw-bold text-navy mb-4">Syllabus</h3>
+            <div class="list-group">
+                <div class="list-group-item d-flex align-items-center gap-3" th:each="unit : ${course.syllabusUnits}">
+                    <span class="unit-badge" th:text="'Unit ' + ${unit.unitNo}">Unit 1</span>
+                    <span th:text="${unit.unitTitle}">Unit Title</span>
+                </div>
+            </div>
+
+            <h3 class="fw-bold text-navy mt-5 mb-4">What You Get</h3>
+            <div class="row g-3">
+                <div class="col-6" th:each="feature : ${course.features}">
+                    <div class="d-flex align-items-center gap-2">
+                        <i th:class="'bi ' + ${feature.iconClass} + ' text-gold fs-4'"></i>
+                        <span th:text="${feature.featureText}">Feature</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right: Enrollment card (sticky) -->
+        <div class="col-lg-5">
+            <div class="card shadow-sm sticky-top" style="top: 100px;">
+                <div class="card-body p-4">
+                    <h2 class="text-navy fw-bold">&#8377; <span th:text="${course.price}">4500</span> <small class="text-muted fs-6">only</small></h2>
+                    <ul class="list-unstyled mt-3">
+                        <li class="mb-2"><i class="bi bi-person-check text-navy"></i> Faculty: <strong th:text="${course.facultyName}">Faculty</strong></li>
+                        <li class="mb-2"><i class="bi bi-laptop text-navy"></i> <span th:text="${course.mode}">Mode</span></li>
+                        <li class="mb-2"><i class="bi bi-calendar-check text-navy"></i> Validity: <span th:text="${course.validity}">Validity</span></li>
+                    </ul>
+                    <!-- This button will trigger Razorpay checkout - we'll wire this up next -->
+                    <button class="btn btn-gold w-100 btn-lg mt-2" id="enrollBtn"
+                            th:data-course-id="${course.id}"
+                            th:data-course-title="${course.title}"
+                            th:data-amount="${course.price}">
+                        Enroll Now
+                    </button>
+                    <a th:href="@{'/enroll-test/' + ${course.id}}" class="btn btn-navy w-100 mb-2 py-2">Enroll Now (Test)</a>
+                    <a th:href="'https://wa.me/91' + ${course.contactNumber}" target="_blank" class="btn btn-outline-navy w-100 mt-2">
+                        <i class="bi bi-whatsapp"></i> Ask a Question
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<footer class="bg-navy text-white py-4">
+    <div class="container text-center">
+        <p class="mb-1 fw-bold">ENGRALIT — Your English Success Partner</p>
+        <p class="mb-0"><i class="bi bi-telephone"></i> <span th:text="${course.contactNumber}">7799691771</span></p>
+    </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<!-- Enroll button is a placeholder for now - Razorpay JS will go here in Phase 4 -->
+<script>
+    document.getElementById('enrollBtn').addEventListener('click', function () {
+        alert('Payment integration (Razorpay) comes in the next step. Course: ' + this.dataset.courseTitle);
+    });
+</script>
+</body>
+</html>

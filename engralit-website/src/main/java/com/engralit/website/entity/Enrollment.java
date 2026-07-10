@@ -1,0 +1,36 @@
+package com.engralit.website.entity;
+
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import java.time.LocalDateTime;
+
+@Entity
+@Table(name = "enrollments")
+@Getter
+@Setter
+@NoArgsConstructor
+public class Enrollment {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
+    @ManyToOne
+    @JoinColumn(name = "course_id")
+    private Course course;
+
+    private LocalDateTime enrolledDate = LocalDateTime.now();
+
+    public void setCourse(Course course) {
+    }
+
+    public void setUser(User user) {
+    }
+}
