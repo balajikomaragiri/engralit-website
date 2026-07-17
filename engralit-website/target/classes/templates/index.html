@@ -25,6 +25,9 @@
             opacity: 1;
             transform: scale(1);
         }
+        .bio-delay {
+            transition-delay: 0.15s;
+        }
     </style>
 </head>
 <body>
@@ -159,7 +162,7 @@
 </section>
 <!-- ===== KNOW YOUR INSTRUCTOR BANNER ===== -->
 <section class="py-5" style="background-color: #f4b41a;">
-    <div class="container text-center">
+    <div class="container text-center zoom-in-scroll">
         <h4 class="fw-bold text-navy mb-2" style="letter-spacing: 1px;">KNOW YOUR INSTRUCTOR</h4>
         <h2 class="fw-bold text-dark mb-4">M. BALAJI</h2>
 
@@ -172,7 +175,6 @@
         </div>
     </div>
 </section>
-
 
 <!-- ===== MEET YOUR INSTRUCTOR ===== -->
 <section id="instructor" class="py-5 bg-white">
@@ -192,7 +194,7 @@
             </div>
 
             <!-- Details -->
-            <div class="col-lg-7">
+            <div class="col-lg-7 zoom-in-scroll bio-delay">
 
                 <span class="badge bg-warning text-dark px-3 py-2 mb-3">
                     Meet Your Instructor
@@ -293,6 +295,7 @@
         zoomEls.forEach(el => observer.observe(el));
     });
 </script>
+
 
 </body>
 </html>

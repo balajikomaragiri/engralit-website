@@ -177,14 +177,10 @@
                     </ul>
 
                     <!-- Main Buy Button -->
-                    <button
-                            id="enrollBtn"
-                            class="btn btn-navy w-100 py-3 fw-bold fs-5 mb-2"
-                            th:data-course-id="${course.id}"
-                            th:data-course-title="${course.title}"
-                            th:data-amount="${course.price}">
-                        Buy Course Now
-                    </button>
+                    <a th:href="@{'/enquiry/' + ${course.id}}"
+                       class="btn btn-gold w-100 btn-lg mt-2">
+                        Buy Course <i class="bi bi-arrow-right"></i>
+                    </a>
 
                     <!-- Test Enroll -->
                     <a th:href="@{'/enroll-test/' + ${course.id}}"
@@ -311,11 +307,6 @@
 </script>
 
 <!-- Enroll Button Script -->
-<script>
-    document.getElementById('enrollBtn').addEventListener('click', function () {
-        alert('Payment integration (Razorpay) comes in the next step. Course: ' + this.dataset.courseTitle);
-    });
-</script>
 
 <!-- Discount Modal -->
 <div class="modal fade" id="discountModal" tabindex="-1">

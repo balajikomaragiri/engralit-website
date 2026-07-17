@@ -1,0 +1,83 @@
+<div th:fragment="chatWidget" xmlns:th="http://www.thymeleaf.org">
+
+    <!-- Floating chat button -->
+    <div id="chatToggleBtn" style="position: fixed; bottom: 90px; right: 25px; z-index: 998;">
+        <button class="btn btn-navy rounded-circle shadow" style="width: 55px; height: 55px;" onclick="toggleChatBox()">
+            <i class="bi bi-chat-dots-fill fs-5"></i>
+        </button>
+        <span id="chatUnreadBadge" class="badge bg-danger rounded-circle position-absolute"
+              style="top: -5px; right: -5px; display:none;">0</span>
+    </div>
+
+    <!-- Chat box panel -->
+    <div id="chatBox" class="shadow-lg"
+         style="display:none; position: fixed; bottom: 155px; right: 25px; width: 320px; max-width: 90vw;
+                background: #fff; border-radius: 12px; overflow: hidden; z-index: 999;">
+        <div class="bg-navy text-white p-3 d-flex justify-content-between align-items-center">
+            <strong>How can I help you?</strong>
+            <i class="bi bi-x-lg" style="cursor:pointer;" onclick="toggleChatBox()"></i>
+        </div>
+        <div id="chatMessages" style="height: 280px; overflow-y: auto; padding: 12px; background: #f8f9fa;"></div>
+        <div class="p-2 border-top d-flex gap-2">
+            <input type="text" id="chatInput" class="form-control form-control-sm" placeholder="Type a message...">
+            <button class="btn btn-gold btn-sm" onclick="sendChatMessage()"><i class="bi bi-send"></i></button>
+        </div>
+    </div>
+
+    <script th:inline="javascript">
+        function toggleChatBox() {
+            const box = document.getElementById('chatBox');
+            box.style.display = (box.style.display === 'none' || box.style.display === '') ? 'block' : 'none';
+            if (box.style.display === 'block') loadChatMessages();
+        }
+
+        function loadChatMessages() {
+            fetch('/api/chat/messages')
+                .then(res => res.json())
+                .then(messages => {
+                    const container = document.getElementById('chatMessages');
+                    container.innerHTML = '';
+                    messages.forEach(m => {
+                        const bubble = document.createElement('div');
+                        bubble.className = 'mb-2 d-flex ' + (m.sender === 'USER' ? 'justify-content-end' : 'justify-content-start');
+                        bubble.innerHTML = `<span class="px-2 py-1 rounded-3 small" style="max-width:75%; background:${m.sender === 'USER' ? '#1a2456;color:#fff' : '#e9ecef;color:#000'}">${m.message}</span>`;
+                        container.appendChild(bubble);
+                    });
+                    container.scrollTop = container.scrollHeight;
+                    updateUnreadBadge();
+                });
+        }
+
+        function sendChatMessage() {
+            const input = document.getElementById('chatInput');
+            const text = input.value.trim();
+            if (!text) return;
+            fetch('/api/chat/send', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: text })
+            }).then(() => {
+                input.value = '';
+                loadChatMessages();
+            });
+        }
+
+        function updateUnreadBadge() {
+            fetch('/api/chat/unread-count')
+                .then(res => res.json())
+                .then(count => {
+                    const badge = document.getElementById('chatUnreadBadge');
+                    if (count > 0) {
+                        badge.style.display = 'inline-block';
+                        badge.textContent = count;
+                    } else {
+                        badge.style.display = 'none';
+                    }
+                });
+        }
+
+        // Poll every 8 seconds for new messages/unread count
+        setInterval(updateUnreadBadge, 8000);
+        document.addEventListener('DOMContentLoaded', updateUnreadBadge);
+    </script>
+</div>
