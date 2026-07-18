@@ -7,6 +7,7 @@ import com.engralit.website.repository.CourseRepository;
 import com.engralit.website.service.EmailService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Controller;
@@ -16,11 +17,12 @@ import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequiredArgsConstructor
+@Slf4j
 public class EnquiryController {
 
     private final CourseRepository courseRepository;
     private final CourseEnquiryRepository enquiryRepository;
-   private final EmailService emailService;
+    private final EmailService emailService;
 
     // Shows the enquiry form
     @GetMapping("/enquiry/{courseId}")
@@ -72,11 +74,16 @@ public class EnquiryController {
             return "enquiry-form";
         }
 
-        // Save enquiry to database
+        // Save enquiry to database (this must always succeed for the user to get credit for their submission)
         enquiryRepository.save(enquiry);
 
-        // Send enquiry details to admin email
-        emailService.sendEnquiryNotification(enquiry);
+        // Try to send admin notification email — if this fails, don't crash the user's request.
+        // The enquiry is already saved, so failing to notify the admin shouldn't show the user an error.
+        try {
+            emailService.sendEnquiryNotification(enquiry);
+        } catch (Exception e) {
+            log.error("Failed to send enquiry notification email for enquiry id={}", enquiry.getId(), e);
+        }
 
         return "redirect:/enquiry/success";
     }
